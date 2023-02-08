@@ -12,14 +12,14 @@ const db = [
 ]
 
 const getPets = (req, res) => {
-    res.json(db);
+    res.status(200).json(db);
 };
 
 const getPet = (req, res) => {
     const id= req.params.id;
     const pet = db.find( p => p.id == id);
 
-    res.json(pet);
+    res.status(200).json(pet);
 }
 
 module.exports = {getPets, getPet};
