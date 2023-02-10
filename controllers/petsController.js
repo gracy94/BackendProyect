@@ -1,18 +1,8 @@
-const db = [
-    {
-        id: 1,
-        name: 'Tobby',
-        type: 'dog',
-    },
-    {
-        id:2,
-        name: 'Zachary',
-        type: 'cat'
-    },
-]
+const Pet = require('../models/Pet')
 
-const getPets = (req, res) => {
-    res.status(200).json(db);
+const getPets = async (req, res) => {
+    const pets = await Pet.find();
+    res.status(200).json(pets);
 };
 
 const getPet = (req, res) => {
