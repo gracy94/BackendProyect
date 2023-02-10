@@ -2,17 +2,32 @@ const Pet = require('../models/Pet')
 
 const getPets = async (req, res) => {
     const pets = await Pet.find();
-    res.status(200).json(pets);
+
+    if(pets){
+        res.status(200).json(pets);
+    } else{
+        res.status(404).json({msg: 'No pets found on db'})
+    }
 };
 
 const getPetById = async (req, res) => {
     const pet = await Pet.findById(req.params.id);
-    res.status(200).json({pet, msg: 'ok'});
+
+    if(pet){
+        res.status(200).json({pet, msg: 'ok'});
+    } else{
+        res.status(404).json({msg: 'The id is not valid'})
+    }
 }
 
 const getPetByName = async (req, res) => {
     const pet = await Pet.findOne({petName: req.query.name});
-    res.status(200).json({pet, msg: 'ok'});
+
+    if(pet){
+        res.status(200).json({pet, msg: 'ok'});
+    } else{
+        res.status(404).json({msg: 'Pet name is not valid'})
+    }
 }
 
 const postPet = async (req, res) => {
