@@ -5,11 +5,21 @@ const getPets = async (req, res) => {
     res.status(200).json(pets);
 };
 
-const getPet = (req, res) => {
-    const id= req.params.id;
-    const pet = db.find( p => p.id == id);
-
-    res.status(200).json(pet);
+const getPetById = async (req, res) => {
+    const pet = await Pet.findById(req.params.id);
+    res.status(200).json({pet, msg: 'ok'});
 }
 
-module.exports = {getPets, getPet};
+const getPetByName = async (req, res) => {
+    const pet = await Pet.findOne({petName: req.query.name});
+    res.status(200).json({pet, msg: 'ok'});
+}
+
+const postPet = async (req, res) => {
+    const pet = new Pet(req.body)
+    await pet.save()
+
+    res.status(200).json({petName: pet.petName, msg: 'ok'})
+}
+
+module.exports = {getPets, getPetById, getPetByName, postPet};

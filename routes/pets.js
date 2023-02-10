@@ -5,6 +5,10 @@ const petsController = require('../controllers/petsController');
 /* GET pets listing. */
 router.get('/', petsController.getPets);
 
-router.get('/:id', petsController.getPet);
+router.get('/find', petsController.getPetByName)
+
+router.get('/:id', petsController.getPetById);
+
+router.post('/registration', petsController.postPet)
 
 module.exports = router;
