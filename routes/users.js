@@ -1,9 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const usersController = require('../controllers/usersController');
 
-/* GET pets listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+/* GET users listing. */
+router.get('/', usersController.getUsers);
+
+router.get('/find', usersController.getUserByName);
+
+router.get('/:id', usersController.getUserById);
+
+router.post('/registration', usersController.postUser);
 
 module.exports = router;
