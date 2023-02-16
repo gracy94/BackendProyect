@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
-const User = require('../models/User')
+const User = require('../models/User');
+const bcrypt = require("bcrypt");
 
 const getUsers = async (req, res) => {
     const users = await User.find();
@@ -39,11 +40,24 @@ const getUserByName = async (req, res) => {
 
 const postUser = async (req, res) => {
     try {
+        //Express-Validation
         const validationError = validationResult(req)
 
         if (validationError.isEmpty()) {
-            const user = new User(req.body)
+
+            //Bcrypt
+            const salt = bcrypt.genSaltSync(10)
+            const hash = bcrypt.hashSync(req.body.password, salt)
+
+            const hashedUser = {
+                userName: req.body.userName,
+                password: hash,
+                email: req.body.email,
+            }
+
+            const user = new User(hashedUser)
             await user.save()
+
             res.status(201).json({userName: user.userName, msg: 'ok', error: null})
         } else {
             res.status(400).json({userName: null, msg: 'invalid data', error: validationError.errors})
