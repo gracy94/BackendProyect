@@ -1,4 +1,5 @@
 const express = require('express');
+const { check } = require('express-validator');
 const router = express.Router();
 const petsController = require('../controllers/petsController');
 
@@ -12,10 +13,34 @@ router.get('/find', petsController.getPetByName);
 router.get('/:id', petsController.getPetById);
 
 /* Post pet*/
-router.post('/registration', petsController.postPet);
+router.post('/registration',
+[
+    check("petName")
+    .not().isEmpty().withMessage('Pet name is required'),
+    check("owner")
+    .not().isEmpty().withMessage('Owner name is required'),
+    check("type")
+    .not().isEmpty().withMessage('Type of pet is required'),
+    check("age")
+    .not().isEmpty().withMessage('Pet age is required')
+    .isNumeric().withMessage('Age must be numeric'),
+],
+petsController.postPet);
 
 /* Update pet */
-router.put('/update/:id', petsController.putPet);
+router.put('/update/:id',
+[
+    check("petName")
+    .not().isEmpty().withMessage('Pet name is required'),
+    check("owner")
+    .not().isEmpty().withMessage('Owner name is required'),
+    check("type")
+    .not().isEmpty().withMessage('Type of pet is required'),
+    check("age")
+    .not().isEmpty().withMessage('Pet age is required')
+    .isNumeric().withMessage('Age must be numeric'),
+],
+petsController.putPet);
 
 /* Delete pet */
 router.delete('/delete/:id', petsController.deletePet);

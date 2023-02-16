@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const Pet = require('../models/Pet')
 
 const getPets = async (req, res) => {
@@ -11,12 +12,17 @@ const getPets = async (req, res) => {
 };
 
 const getPetById = async (req, res) => {
-    const pet = await Pet.findById(req.params.id);
 
-    if(pet){
-        res.status(200).json({pet, msg: 'ok'});
-    } else{
-        res.status(404).json({msg: 'The id is not valid'})
+    if (req.params.id.length == 24) {
+        const pet = await Pet.findById(req.params.id);
+    
+        if(pet){
+            res.status(200).json({pet, msg: 'ok'});
+        } else{
+            res.status(404).json({msg: 'The id is not valid'})
+        }
+    } else {
+        res.status(404).json({msg: 'The id must be 24 characters'})
     }
 }
 
@@ -32,9 +38,16 @@ const getPetByName = async (req, res) => {
 
 const postPet = async (req, res) => {
     try {
-        const pet = new Pet(req.body)
-        await pet.save()
-        res.status(200).json({petName: pet.petName, msg: 'ok'})  
+        const validationError = validationResult(req)
+
+        if (validationError.isEmpty()) {
+            const pet = new Pet(req.body)
+            await pet.save()
+            res.status(201).json({petName: pet.petName, msg: 'ok', error: null})  
+        } else {
+            res.status(400).json({petName: null, msg: 'invalid data', error: validationError.errors})
+        }
+
     }catch (error) {
         res.status(500).json({msg: 'Error -' + error.message})
     }
@@ -42,13 +55,19 @@ const postPet = async (req, res) => {
 
 const putPet = async (req, res) => {
     try {
-        const pet = await Pet.findByIdAndUpdate(req.params.id, req.body)
+        const validationError = validationResult(req)
 
-        if(pet){
-            res.status(200).json({petName: req.body.petName, msg: 'pet successfully updated'})
-        } else{
-            res.status(404).json({petName: null, msg: 'The id is not valid'})
-        }   
+        if (validationError.isEmpty()) {
+            const pet = await Pet.findByIdAndUpdate(req.params.id, req.body)
+    
+            if(pet){
+                res.status(200).json({petName: req.body.petName, msg: 'pet successfully updated'})
+            } else{
+                res.status(404).json({petName: null, msg: 'The id is not valid'})
+            }               
+        } else {
+            res.status(400).json({petName: null, msg: 'invalid data', error: validationError.errors})
+        }
     }catch (error) {
         res.status(500).json({msg: 'Error -' + error.message})
     }
