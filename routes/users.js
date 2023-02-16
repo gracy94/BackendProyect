@@ -2,6 +2,8 @@ const express = require('express');
 const { check } = require('express-validator');
 const router = express.Router();
 const usersController = require('../controllers/usersController');
+const emailValidation = require('../middlewares/emailValidation');
+const userValidation = require('../middlewares/userValidation');
 
 /* GET users listing. */
 router.get('/', usersController.getUsers);
@@ -21,7 +23,9 @@ router.post(
     check("email")
     .not().isEmpty().withMessage('Email is required')
     .isEmail().withMessage('Email must be valid'),
-  ], 
+  ],
+  userValidation,
+  emailValidation,
   usersController.postUser);
 
 module.exports = router;
